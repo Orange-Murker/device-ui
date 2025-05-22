@@ -251,7 +251,7 @@ void create_screen_boot_screen() {
             }
         }
     }
-    
+
     tick_screen_boot_screen();
 }
 
@@ -600,7 +600,7 @@ void create_screen_main_screen() {
                             objects.home_location_label = obj;
                             lv_obj_set_pos(obj, 105, 50);
                             lv_obj_set_size(obj, LV_PCT(80), LV_SIZE_CONTENT);
-                            lv_label_set_text(obj, "N???° ??.????'\nW???° ??.????'");
+                            lv_label_set_text(obj, "N???° ??.??\?\?'\nW???° ??.??\?\?'");
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_text_line_space(obj, -4, LV_PART_MAIN | LV_STATE_DEFAULT);
                         }
@@ -6327,7 +6327,7 @@ void create_screen_main_screen() {
             lv_obj_set_style_max_width(obj, 600, LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
-    
+
     tick_screen_main_screen();
 }
 
@@ -6375,7 +6375,7 @@ void create_screen_blank_screen() {
             lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_PRESSED);
         }
     }
-    
+
     tick_screen_blank_screen();
 }
 
@@ -6454,7 +6454,7 @@ void create_screen_lock_screen() {
             lv_obj_set_style_text_color(obj, lv_color_hex(0xffe0e0e0), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
-    
+
     tick_screen_lock_screen();
 }
 
@@ -6468,7 +6468,7 @@ void create_screen_calibration_screen() {
     lv_obj_set_size(obj, 320, 240);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff67ea94), LV_PART_MAIN | LV_STATE_DEFAULT);
-    
+
     tick_screen_calibration_screen();
 }
 
@@ -6573,7 +6573,7 @@ void create_screens() {
     lv_disp_t *dispp = lv_disp_get_default();
     lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
-    
+
     create_screen_boot_screen();
     create_screen_main_screen();
     create_screen_blank_screen();
