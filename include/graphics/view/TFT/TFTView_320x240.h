@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/common/MeshtasticView.h"
+#include "graphics/driver/DisplayDriverConfig.h"
 #include "meshtastic/clientonly.pb.h"
 #include <set>
 
@@ -15,6 +16,7 @@ class MapPanel;
 class TFTView_320x240 : public MeshtasticView
 {
   public:
+    static TFTView_320x240 *instance(const DisplayDriverConfig &cfg, DisplayDriver *driver);
     void init(IClientBase *client) override;
     bool setupUIConfig(const meshtastic_DeviceUIConfig &uiconfig) override;
     void task_handler(void) override;

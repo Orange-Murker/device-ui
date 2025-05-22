@@ -123,7 +123,7 @@ bool TFTView_320x240::screenUnlockRequest = false;
 TFTView_320x240 *TFTView_320x240::instance(void)
 {
     if (!gui) {
-        gui = new TFTView_320x240(nullptr, DisplayDriverFactory::create(320, 240));
+        // gui = new TFTView_320x240(nullptr, DisplayDriverFactory::create(320, 240));
     }
     return gui;
 }
@@ -131,7 +131,15 @@ TFTView_320x240 *TFTView_320x240::instance(void)
 TFTView_320x240 *TFTView_320x240::instance(const DisplayDriverConfig &cfg)
 {
     if (!gui) {
-        gui = new TFTView_320x240(&cfg, DisplayDriverFactory::create(cfg));
+        // gui = new TFTView_320x240(&cfg, DisplayDriverFactory::create(cfg));
+    }
+    return gui;
+}
+
+TFTView_320x240 *TFTView_320x240::instance(const DisplayDriverConfig &cfg, DisplayDriver *driver)
+{
+    if (!gui) {
+        gui = new TFTView_320x240(&cfg, driver);
     }
     return gui;
 }
@@ -6210,7 +6218,7 @@ void TFTView_320x240::restoreMessage(const LogMessage &msg)
             MeshtasticView::addOrUpdateNode(msg.from, msg.ch, 0, eRole::unknown, false, false);
         } else {
             ILOG_DEBUG("from node 0x%08x not in db and no need to insert", msg.from);
-            pos += sprintf(buf, "%04x ", msg.from & 0xffff);
+            pos += sprintf(buf, "%04lx ", msg.from & 0xffff);
         }
         uint32_t len = timestamp(buf + pos, msg.time, false);
         memcpy(buf + pos + len, msg.bytes, msg.size());
@@ -6268,7 +6276,7 @@ void TFTView_320x240::addChat(uint32_t from, uint32_t to, uint8_t ch)
             sprintf(buf, "%s: %s", lv_label_get_text(it->second->LV_OBJ_IDX(node_lbs_idx)),
                     lv_label_get_text(it->second->LV_OBJ_IDX(node_lbl_idx)));
         } else {
-            sprintf(buf, "!%08x", from);
+            sprintf(buf, "!%08lx", from);
         }
     }
 
@@ -7022,7 +7030,7 @@ void TFTView_320x240::task_handler(void)
                         removeSpinner();
                     } else {
                         char buf[16];
-                        sprintf(buf, "%ds", ((35 - (curtime - startTime)) / 5) * 5);
+                        sprintf(buf, "%llds", ((35 - (curtime - startTime)) / 5) * 5);
                         lv_label_set_text(objects.trace_route_start_label, buf);
                     }
                 }
