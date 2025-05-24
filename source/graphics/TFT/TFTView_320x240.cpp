@@ -4928,6 +4928,54 @@ void TFTView_320x240::updateDistance(uint32_t nodeNum, int32_t lat, int32_t lon)
     lv_obj_set_pos(userShort, 30, -1);
 }
 
+void TFTView_320x240::updateBatteryLevel(BatteryLevel::Status status, uint32_t bat_level) {
+    if (state >= eConfigComplete) {
+        char buf[48];
+        uint32_t shown_level = std::min(bat_level, (uint32_t)100);
+        sprintf(buf, "%d%%", shown_level);
+        bool alert = false;
+
+        switch (status) {
+        case BatteryLevel::Plugged:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_plug_image,
+                                            LV_PART_MAIN | LV_STATE_DEFAULT);
+            if (shown_level == 100)
+                buf[0] = '\0';
+            break;
+        case BatteryLevel::Charging:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_bolt_image,
+                                            LV_PART_MAIN | LV_STATE_DEFAULT);
+            break;
+        case BatteryLevel::Full:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_full_image,
+                                            LV_PART_MAIN | LV_STATE_DEFAULT);
+            break;
+        case BatteryLevel::Mid:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_mid_image, LV_PART_MAIN | LV_STATE_DEFAULT);
+            break;
+        case BatteryLevel::Low:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_low_image, LV_PART_MAIN | LV_STATE_DEFAULT);
+            break;
+        case BatteryLevel::Empty:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_empty_image,
+                                            LV_PART_MAIN | LV_STATE_DEFAULT);
+            break;
+        case BatteryLevel::Warn:
+            lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_empty_warn_image,
+                                            LV_PART_MAIN | LV_STATE_DEFAULT);
+            buf[0] = '\0';
+            alert = true;
+            break;
+        default:
+            ILOG_ERROR("unhandled battery level %d", status);
+            break;
+        }
+        Themes::recolorTopLabel(objects.battery_percentage_label, alert);
+        lv_obj_set_style_bg_image_recolor_opa(objects.battery_image, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(objects.battery_percentage_label, buf);
+    }
+}
+
 /**
  * @brief Update battery level and air utilisation
  *
@@ -4945,54 +4993,6 @@ void TFTView_320x240::updateMetrics(uint32_t nodeNum, uint32_t bat_level, float 
         if (it->first == ownNode) {
             sprintf(buf, _("Util %0.1f%%  Air %0.1f%%"), chUtil, airUtil);
             lv_label_set_text(it->second->LV_OBJ_IDX(node_sig_idx), buf);
-
-            // update battery percentage and symbol
-            if (bat_level != 0 || voltage != 0) {
-                uint32_t shown_level = std::min(bat_level, (uint32_t)100);
-                sprintf(buf, "%d%%", shown_level);
-                bool alert = false;
-
-                BatteryLevel level;
-                BatteryLevel::Status status = level.calcStatus(bat_level, voltage);
-                switch (status) {
-                case BatteryLevel::Plugged:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_plug_image,
-                                                  LV_PART_MAIN | LV_STATE_DEFAULT);
-                    if (shown_level == 100)
-                        buf[0] = '\0';
-                    break;
-                case BatteryLevel::Charging:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_bolt_image,
-                                                  LV_PART_MAIN | LV_STATE_DEFAULT);
-                    break;
-                case BatteryLevel::Full:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_full_image,
-                                                  LV_PART_MAIN | LV_STATE_DEFAULT);
-                    break;
-                case BatteryLevel::Mid:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_mid_image, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    break;
-                case BatteryLevel::Low:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_low_image, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    break;
-                case BatteryLevel::Empty:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_empty_image,
-                                                  LV_PART_MAIN | LV_STATE_DEFAULT);
-                    break;
-                case BatteryLevel::Warn:
-                    lv_obj_set_style_bg_image_src(objects.battery_image, &img_battery_empty_warn_image,
-                                                  LV_PART_MAIN | LV_STATE_DEFAULT);
-                    buf[0] = '\0';
-                    alert = true;
-                    break;
-                default:
-                    ILOG_ERROR("unhandled battery level %d", status);
-                    break;
-                }
-                Themes::recolorTopLabel(objects.battery_percentage_label, alert);
-                lv_obj_set_style_bg_image_recolor_opa(objects.battery_image, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-                lv_label_set_text(objects.battery_percentage_label, buf);
-            }
         }
 
         if (bat_level != 0 || voltage != 0) {
