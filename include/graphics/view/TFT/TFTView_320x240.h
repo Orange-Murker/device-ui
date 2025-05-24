@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics/common/BatteryLevel.h"
 #include "graphics/common/MeshtasticView.h"
 #include "graphics/driver/DisplayDriverConfig.h"
 #include "meshtastic/clientonly.pb.h"
@@ -32,6 +33,7 @@ class TFTView_320x240 : public MeshtasticView
     void updateNode(uint32_t nodeNum, uint8_t channel, const char *userShort, const char *userLong, uint32_t lastHeard,
                     eRole role, bool hasKey, bool viaMqtt) override;
     void updatePosition(uint32_t nodeNum, int32_t lat, int32_t lon, int32_t alt, uint32_t sats, uint32_t precision) override;
+    void updateBatteryLevel(BatteryLevel::Status status, uint32_t bat_level);
     void updateMetrics(uint32_t nodeNum, uint32_t bat_level, float voltage, float chUtil, float airUtil) override;
     void updateEnvironmentMetrics(uint32_t nodeNum, const meshtastic_EnvironmentMetrics &metrics) override;
     void updateAirQualityMetrics(uint32_t nodeNum, const meshtastic_AirQualityMetrics &metrics) override;
