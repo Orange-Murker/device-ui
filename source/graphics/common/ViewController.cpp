@@ -8,6 +8,9 @@
 #if defined(ARCH_PORTDUINO)
 #include "PortduinoFS.h"
 fs::FS &persistentFS = PortduinoFS;
+#elif defined(USE_FFAT)
+#include "FFat.h"
+fs::FS &persistentFS = FFat;
 #else
 #include "LittleFS.h"
 fs::FS &persistentFS = LittleFS;

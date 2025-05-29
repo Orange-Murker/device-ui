@@ -32,6 +32,9 @@
 #if defined(ARCH_PORTDUINO)
 #include "PortduinoFS.h"
 fs::FS &fileSystem = PortduinoFS;
+#elif defined(USE_FFAT)
+#include "FFat.h"
+fs::FS &fileSystem = FFat;
 #else
 #include "LittleFS.h"
 fs::FS &fileSystem = LittleFS;
