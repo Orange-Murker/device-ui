@@ -26,12 +26,10 @@ class TFTView_320x240 : public MeshtasticView
     void setMyInfo(uint32_t nodeNum) override;
     void setDeviceMetaData(int hw_model, const char *version, bool has_bluetooth, bool has_wifi, bool has_eth,
                            bool can_shutdown) override;
-    void addOrUpdateNode(uint32_t nodeNum, uint8_t channel, const char *userShort, const char *userLong, uint32_t lastHeard,
-                         eRole role, bool hasKey, bool viaMqtt) override;
+    void addOrUpdateNode(uint32_t nodeNum, uint8_t channel, uint32_t lastHeard, const meshtastic_User &cfg) override;
     void addNode(uint32_t nodeNum, uint8_t channel, const char *userShort, const char *userLong, uint32_t lastHeard, eRole role,
-                 bool hasKey, bool viaMqtt) override;
-    void updateNode(uint32_t nodeNum, uint8_t channel, const char *userShort, const char *userLong, uint32_t lastHeard,
-                    eRole role, bool hasKey, bool viaMqtt) override;
+                 bool hasKey, bool unmessagable) override;
+    void updateNode(uint32_t nodeNum, uint8_t channel, const meshtastic_User &cfg) override;
     void updatePosition(uint32_t nodeNum, int32_t lat, int32_t lon, int32_t alt, uint32_t sats, uint32_t precision) override;
     void updateBatteryLevel(BatteryLevel::Status status, uint32_t bat_level);
     void updateMetrics(uint32_t nodeNum, uint32_t bat_level, float voltage, float chUtil, float airUtil) override;
@@ -177,7 +175,7 @@ class TFTView_320x240 : public MeshtasticView
     // mark sent message as received
     virtual void handleTextMessageResponse(uint32_t channelOrNode, uint32_t id, bool ack, bool err);
     // set node image based on role
-    virtual void setNodeImage(uint32_t nodeNum, eRole role, bool viaMqtt, lv_obj_t *img);
+    virtual void setNodeImage(uint32_t nodeNum, eRole role, bool unmessagable, lv_obj_t *img);
     // apply filter and count number of filtered nodes
     virtual void updateNodesFiltered(bool reset);
     // set last heard to now, update nodes online
@@ -403,6 +401,7 @@ class TFTView_320x240 : public MeshtasticView
     bool packetLogEnabled;                                // display received packets
     bool detectorRunning;                                 // meshDetector is active
     bool formatSD;                                        // offer to format SD card
+    uint16_t buttonSize;                                  // size of group/chat buttons in pixels
     uint16_t statisticTableRows;                          // number of rows in statistics table
     uint16_t packetCounter;                               // number of packets in packet log
     time_t lastrun60, lastrun10, lastrun5, lastrun1;      // timers for task loop
@@ -430,6 +429,7 @@ class TFTView_320x240 : public MeshtasticView
     std::unordered_map<uint32_t, lv_obj_t *> nodeObjects; // nodeObjects displayed on map
     // extended default device profile struct with additional required data
     struct meshtastic_DeviceProfile_ext : meshtastic_DeviceProfile {
+        meshtastic_User user;
         meshtastic_Channel channel[c_max_channels]; // storage of channel info
         meshtastic_DeviceUIConfig uiConfig;         // storage of persistent UI data
     };

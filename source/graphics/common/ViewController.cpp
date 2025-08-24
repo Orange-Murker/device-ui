@@ -464,7 +464,7 @@ void ViewController::sendPing(void)
 {
     if (client->isConnected()) {
         client->send(meshtastic_ToRadio{.which_payload_variant = meshtastic_ToRadio_heartbeat_tag,
-                                        .heartbeat{.dummy_field = 1}}); // tell packet server to send ping to all nodes
+                                        .heartbeat{.nonce = 1}}); // tell packet server to send ping to all nodes
     }
 }
 
@@ -480,7 +480,7 @@ void ViewController::sendTextMessage(uint32_t to, uint8_t ch, uint8_t hopLimit, 
     assert(msgLen <= (size_t)DATA_PAYLOAD_LEN);
 
     if (send(to, ch, hopLimit, requestId, meshtastic_PortNum_TEXT_MESSAGE_APP, false, usePkc, (const uint8_t *)textmsg, msgLen)) {
-        ILOG_DEBUG("storing msg to:0x%08x, ch:%d, time:%d, size:%d, '%s'", to, ch, msgTime, msgLen, textmsg);
+        // ILOG_DEBUG("storing msg to:0x%08x, ch:%d, time:%d, size:%d, '%s'", to, ch, msgTime, msgLen, textmsg);
         log.write(LogMessageEnv(myNodeNum, to, ch, msgTime, LogMessage::eDefault, false, msgLen, (const uint8_t *)textmsg));
     }
 }
@@ -710,10 +710,9 @@ bool ViewController::handleFromRadio(const meshtastic_FromRadio &from)
             case meshtastic_FromRadio_node_info_tag: {
                 const meshtastic_NodeInfo &node = from.node_info;
                 if (node.has_user) {
-                    view->addOrUpdateNode(node.num, node.channel, node.user.short_name, node.user.long_name, node.last_heard,
-                                          (MeshtasticView::eRole)node.user.role, node.user.public_key.size != 0, node.via_mqtt);
+                    view->addOrUpdateNode(node.num, node.channel, node.last_heard, node.user);
                 } else {
-                    view->addOrUpdateNode(node.num, node.channel, node.last_heard, (MeshtasticView::eRole)node.user.role, false,
+                    view->addOrUpdateNode(node.num, node.channel, node.last_heard, MeshtasticView::eRole::unknown, false,
                                           node.via_mqtt);
                 }
                 if (node.has_position) {
@@ -961,8 +960,7 @@ bool ViewController::packetReceived(const meshtastic_MeshPacket &p)
     case meshtastic_PortNum_NODEINFO_APP: {
         meshtastic_User user;
         if (pb_decode_from_bytes(p.decoded.payload.bytes, p.decoded.payload.size, &meshtastic_User_msg, &user)) {
-            view->updateNode(p.from, -1, user.short_name, user.long_name, 0, (MeshtasticView::eRole)user.role,
-                             user.public_key.size != 0, false); // TODO viaMqtt?
+            view->updateNode(p.from, -1, user);
         } else {
             ILOG_ERROR("Error decoding protobuf meshtastic_User (nodeinfo)!");
             return false;
