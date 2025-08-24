@@ -2588,7 +2588,7 @@ void TFTView_320x240::loadMap(void)
                 }
                 MapTileSettings::setPrefix("/maps");
             } else {
-                messageAlert(_("No map tiles found on SDCard!"), true);
+                // messageAlert(_("No map tiles found on SDCard!"), true);
                 map->setNoTileImage(&img_no_tile_image);
                 lv_obj_clear_flag(objects.world_image, LV_OBJ_FLAG_HIDDEN);
             }
