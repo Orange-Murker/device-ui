@@ -4583,6 +4583,8 @@ void TFTView_320x240::addNode(uint32_t nodeNum, uint8_t ch, const char *userShor
     lv_obj_set_style_max_height(nodeButton, 132, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_min_height(nodeButton, 50, LV_PART_MAIN | LV_STATE_DEFAULT);
     nodeButton->user_data = _lv_ll_get_tail(lv_group_ll);
+    lv_obj_set_style_margin_hor(nodeButton, 10, LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(nodeButton, 5, LV_STATE_FOCUSED);
 
     // UserNameLabel
     lv_obj_t *ln_lbl = lv_label_create(p);
