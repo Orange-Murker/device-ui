@@ -1,3 +1,5 @@
+#include "indev/lv_indev.h"
+#include "misc/lv_event.h"
 #if HAS_TFT && defined(VIEW_320x240)
 
 #include "graphics/view/TFT/TFTView_320x240.h"
@@ -870,6 +872,7 @@ void TFTView_320x240::ui_events_init(void)
     lv_obj_add_event_cb(objects.settings_restore_checkbox, ui_event_backup_restore_radio_button, LV_EVENT_ALL, NULL);
 
     // map settings and navigation
+    lv_obj_add_event_cb(objects.map_button, ui_event_mapKey, LV_EVENT_KEY, NULL);
     lv_obj_add_event_cb(objects.main_screen, ui_screen_event_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_event_cb(objects.arrow_up_button, ui_event_arrow, LV_EVENT_CLICKED, (void *)8);
     lv_obj_add_event_cb(objects.arrow_left_button, ui_event_arrow, LV_EVENT_CLICKED, (void *)4);
@@ -2499,6 +2502,35 @@ void TFTView_320x240::ui_event_navHome(lv_event_t *e)
                                                                  .location_source = meshtastic_Position_LocSource_LOC_MANUAL});
             }
         }
+    }
+}
+
+void TFTView_320x240::ui_event_mapKey(lv_event_t *e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    if (event_code == LV_EVENT_KEY) {
+        uint32_t key = lv_indev_get_key(lv_indev_active());
+        switch (key) {
+        case '-':
+            ui_event_zoomOut(e);
+            return;
+        case '=':
+            ui_event_zoomIn(e);
+            return;
+        case 'w':
+            e->user_data = (void*) scrollUp;
+            break;
+        case 'a':
+            e->user_data = (void*) scrollLeft;
+            break;
+        case 's':
+            e->user_data = (void*) scrollDown;
+            break;
+        case 'd':
+            e->user_data = (void*) scrollRight;
+            break;
+        }
+        THIS->ui_event_arrow(e);
     }
 }
 

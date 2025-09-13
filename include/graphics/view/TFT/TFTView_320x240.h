@@ -383,6 +383,8 @@ class TFTView_320x240 : public MeshtasticView
     static void ui_event_mapNodeButton(lv_event_t *e);
     static void ui_event_chatNodeButton(lv_event_t *e);
     static void ui_event_positionButton(lv_event_t *e);
+    // Use the keyboard to navigate the map
+    static void ui_event_mapKey(lv_event_t *e);
 
     // animations
     static void ui_anim_node_panel_cb(void *var, int32_t v);
