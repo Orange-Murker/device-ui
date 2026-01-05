@@ -2519,18 +2519,21 @@ void TFTView_320x240::ui_event_mapKey(lv_event_t *e)
             return;
         case 'w':
             e->user_data = (void*) scrollUp;
+            THIS->ui_event_arrow(e);
             break;
         case 'a':
             e->user_data = (void*) scrollLeft;
+            THIS->ui_event_arrow(e);
             break;
         case 's':
             e->user_data = (void*) scrollDown;
+            THIS->ui_event_arrow(e);
             break;
         case 'd':
             e->user_data = (void*) scrollRight;
+            THIS->ui_event_arrow(e);
             break;
         }
-        THIS->ui_event_arrow(e);
     }
 }
 

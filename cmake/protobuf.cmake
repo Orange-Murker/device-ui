@@ -2,6 +2,6 @@ message(STATUS "Fetching protobufs ...")
 FetchContent_Declare(
     Protobuf
     GIT_REPOSITORY "https://github.com/meshtastic/protobufs"
-    GIT_TAG  v2.7.8
+    GIT_TAG  v2.7.17
 )
 FetchContent_MakeAvailable(Protobuf)
